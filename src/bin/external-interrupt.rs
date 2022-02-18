@@ -4,6 +4,7 @@
  * 
  * Note: The use of the either crate requires the deactivation of std to use it in core. See the Cargo.toml 
  * in this directory for details.
+ * See also: https://www.perceptivebits.com/interrupted-by-embedded-rust/
  */
 #![no_std]
 #![no_main]
