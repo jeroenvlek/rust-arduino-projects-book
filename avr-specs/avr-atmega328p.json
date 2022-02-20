@@ -23,5 +23,6 @@
     ]
   },
   "target-c-int-width": "16",
-  "target-pointer-width": "16"
+  "target-pointer-width": "16",
+  "no-builtins": true
 }
