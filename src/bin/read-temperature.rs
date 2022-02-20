@@ -1,6 +1,6 @@
 /*!
  * Read the temperature sensor via the Analog Digital Converter (ADC) and display
- * the readout via LED indicators.
+ * the readout via LED indicators. Based on Project #3 the Love-o-meter, but with more leds.
  * 
  * Note that determining the amount of leds to light up could be done without any floats, but 
  * I wanted to mess around with floats and I learned something interesting:
@@ -41,9 +41,9 @@ fn compute_num_leds_on(temp: f32, total_leds: usize) -> usize {
         temp
     };
 
-    let num_leds_on = (safe_temp - BASELINE_TEMP) / (MAX_TEMP - BASELINE_TEMP) * total_leds as f32;
+    let num_leds_on = ((safe_temp - BASELINE_TEMP) / (MAX_TEMP - BASELINE_TEMP)) * (total_leds as f32);
 
-    return num_leds_on as usize;
+    return (num_leds_on + 0.5) as usize; // with rounding
 }
 
 
