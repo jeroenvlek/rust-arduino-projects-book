@@ -4,4 +4,4 @@ Rust implementations for the projects in the Arduino Projects Book and other sma
 
 Run an idea with:
 
-`cargo run --bin $IDEA` e.g. `cargo run --bin rust-arduino-blink`
+`cargo run --bin $IDEA` e.g. `cargo run --bin blink`
