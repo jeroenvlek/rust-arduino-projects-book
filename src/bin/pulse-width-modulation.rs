@@ -6,15 +6,16 @@
 #![no_std]
 #![no_main]
 
+use arduino_hal::port::Pin;
 use ufmt;
-use arduino_hal::hal::port::{PC0, PC1, PC2};
-use arduino_hal::port::mode::Analog;
+use arduino_hal::hal::port::{PC0, PC1, PC2, };
+use arduino_hal::port::mode::{Analog};
 use panic_halt as _;
 use arduino_hal::prelude::*;
 
 use arduino_hal::Adc;
 use arduino_hal;
-use arduino_hal::port::{mode, Pin};
+use arduino_hal::simple_pwm::*;
 
 struct SensorRead(u16, u16, u16);
 
@@ -44,11 +45,19 @@ fn main() -> ! {
     let mut serial = arduino_hal::default_serial!(dp, pins, 57600);
     let mut adc = arduino_hal::Adc::new(dp.ADC, Default::default());
 
-    let mut pwm_output: [Pin<mode::Output>; 3] = [
-        pins.d11.into_output().downgrade(),
-        pins.d10.into_output().downgrade(),
-        pins.d9.into_output().downgrade()
-    ];
+    // Note the pins on the rgb led are actually in order rbg
+    let timer2 = Timer2Pwm::new(dp.TC2, Prescaler::Prescale64);
+    let mut r_pin = pins.d11.into_output().into_pwm(&timer2);
+    r_pin.enable();
+    
+    let timer1 = Timer1Pwm::new(dp.TC1, Prescaler::Prescale64);
+    let mut b_pin = pins.d10.into_output().into_pwm(&timer1);
+    b_pin.enable();
+    
+    let timer0 = Timer0Pwm::new(dp.TC0, Prescaler::Prescale64);
+    let mut g_pin = pins.d6.into_output().into_pwm(&timer0);
+    g_pin.enable();
+
 
     let sensor = RGBSensor {
         red_sensor: pins.a0.into_analog_input(&mut adc),
@@ -62,6 +71,11 @@ fn main() -> ! {
         ufmt::uwriteln!(&mut serial, "Current green: {}", rgb_read.1).void_unwrap();
         ufmt::uwriteln!(&mut serial, "Current blue: {}", rgb_read.2).void_unwrap();
         ufmt::uwriteln!(&mut serial, "").void_unwrap();
-        arduino_hal::delay_ms(500);
+
+        r_pin.set_duty(rgb_read.0 as u8);
+        g_pin.set_duty(rgb_read.1 as u8);
+        b_pin.set_duty(rgb_read.2 as u8);
+
+        arduino_hal::delay_ms(10);
     }
 }
