@@ -19,6 +19,7 @@ use arduino_hal::simple_pwm::*;
 
 struct SensorRead(u16, u16, u16);
 
+// Should probably get the ADC as a member to avoid passing it twice
 struct RGBSensor{
     red_sensor: Pin<Analog, PC0>,
     green_sensor: Pin<Analog, PC1>,
@@ -76,6 +77,6 @@ fn main() -> ! {
         g_pin.set_duty(rgb_read.1 as u8);
         b_pin.set_duty(rgb_read.2 as u8);
 
-        arduino_hal::delay_ms(10);
+        arduino_hal::delay_ms(15);
     }
 }
