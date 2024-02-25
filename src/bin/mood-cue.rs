@@ -1,8 +1,8 @@
 #![no_std]
 #![no_main]
 
-use arduino_hal::simple_pwm::*;
 use arduino_hal::prelude::*;
+use arduino_hal::simple_pwm::*;
 
 use panic_halt as _;
 
@@ -13,10 +13,9 @@ const MAX_ANGLE: u16 = 179;
 const MAX_POT_VALUE: u16 = 1023;
 
 // adaptation from https://www.arduino.cc/reference/en/language/functions/math/map/
-fn scale_range(x:u16, in_min:u16, in_max: u16, out_min:u16, out_max: u16) -> u16 {
-    return x  * out_max / in_max;
+fn scale_range(x: u16, in_min: u16, in_max: u16, out_min: u16, out_max: u16) -> u16 {
+    return x * out_max / in_max;
 }
-
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -44,11 +43,10 @@ fn main() -> ! {
         // let pot_val = pot_pin.analog_read(&mut adc);
         // let scaled_angle = scale_range(pot_val, 0, MAX_POT_VALUE, 0, MAX_ANGLE);
         // ufmt::uwriteln!(&mut serial, "Current pot value: {}, scaled {}", pot_val, scaled_angle).void_unwrap();
-        
+
         for scaled_angle in 0..=(179 as u8) {
             servo_pin.set_duty(scaled_angle);
             arduino_hal::delay_ms(100)
         }
-
     }
 }

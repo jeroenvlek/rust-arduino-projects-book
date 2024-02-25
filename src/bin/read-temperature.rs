@@ -1,12 +1,12 @@
 /*!
  * Read the temperature sensor via the Analog Digital Converter (ADC) and display
  * the readout via LED indicators. Based on Project #3 the Love-o-meter, but with more leds.
- * 
- * Note that determining the amount of leds to light up could be done without any floats, but 
+ *
+ * Note that determining the amount of leds to light up could be done without any floats, but
  * I wanted to mess around with floats and I learned something interesting:
- * 
+ *
  * https://github.com/avr-rust/rust-legacy-fork/issues/149
- * 
+ *
  */
 #![no_std]
 #![no_main]
@@ -20,32 +20,30 @@ use arduino_hal::port::{mode, Pin};
 use ufmt;
 // use ufmt_float::uFmt_f32;
 
-const BASELINE_TEMP : f32 = 20.0;
-const MAX_TEMP : f32 = 30.0;
-const VOLTAGE_SCALE : f32 = 5.0 / 1024.0;
+const BASELINE_TEMP: f32 = 20.0;
+const MAX_TEMP: f32 = 30.0;
+const VOLTAGE_SCALE: f32 = 5.0 / 1024.0;
 
-fn sensor_read_to_temp(sensor_read : u16) -> f32 {
+fn sensor_read_to_temp(sensor_read: u16) -> f32 {
     let voltage = sensor_read as f32 * VOLTAGE_SCALE;
     let temp = (voltage - 0.5) * 100.0;
-    return temp
+    return temp;
 }
 
 fn compute_num_leds_on(temp: f32, total_leds: usize) -> usize {
-    let safe_temp: f32 = if temp < BASELINE_TEMP { 
-        BASELINE_TEMP 
-    } 
-    else if temp > MAX_TEMP {
+    let safe_temp: f32 = if temp < BASELINE_TEMP {
+        BASELINE_TEMP
+    } else if temp > MAX_TEMP {
         MAX_TEMP
-    }
-    else {
+    } else {
         temp
     };
 
-    let num_leds_on = ((safe_temp - BASELINE_TEMP) / (MAX_TEMP - BASELINE_TEMP)) * (total_leds as f32);
+    let num_leds_on =
+        ((safe_temp - BASELINE_TEMP) / (MAX_TEMP - BASELINE_TEMP)) * (total_leds as f32);
 
     return (num_leds_on + 0.5) as usize; // with rounding
 }
-
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -77,8 +75,7 @@ fn main() -> ! {
         for (i, led) in leds.iter_mut().enumerate() {
             if i < num_leds_on {
                 led.set_high();
-            } 
-            else {
+            } else {
                 led.set_low();
             }
         }
