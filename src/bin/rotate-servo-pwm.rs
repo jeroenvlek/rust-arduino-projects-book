@@ -18,7 +18,7 @@ fn main() -> ! {
     servo_pin.enable();
 
     let min_duty = 1;
-    let max_duty = 254;
+    let max_duty = 180;
 
     loop {
         for duty in (min_duty..=max_duty).chain((min_duty..max_duty).rev()) {
